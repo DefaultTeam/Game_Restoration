@@ -1,37 +1,37 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ButtonMenger : MonoBehaviour {
 
-	public GameObject settingPanel;
-	public GameObject playPanel;
-	public GameObject exitPanel;
+	public GameObject setting;
+	public GameObject play;
+	public GameObject exit;
 
 	public void Play()
 	{
-		playPanel.SetActive(!playPanel.activeSelf);
-		//settingPanel.SetActive(false);
-		//exitPanel.SetActive(false);
+		play.SetActive(!play.activeSelf);
+		setting.SetActive(false);
+		exit.SetActive(false);
 	}
 
 	public void Settings()
 	{
-		settingPanel.SetActive(!settingPanel.activeSelf);
-		//playPanel.SetActive(false);
-		//exitPanel.SetActive(false);
+		setting.SetActive(!setting.activeSelf);
+		play.SetActive(false);
+		exit.SetActive(false);
 	}
 
 	public void Exit()
 	{
-		exitPanel.SetActive(!exitPanel.activeSelf);
-		//playPanel.SetActive(false);
-		//settingPanel.SetActive(false);
+		exit.SetActive(!exit.activeSelf);
+		play.SetActive(false);
+		setting.SetActive(false);
 	}	
 
 	public void Continue()
 	{
-
+	
 	}
 
 	public void NewGame()
@@ -46,6 +46,17 @@ public class ButtonMenger : MonoBehaviour {
 
 	public void ExitNo()
 	{
-		exitPanel.SetActive(false);
+		exit.SetActive(false);
 	}	
+
+	public void SetMusic(float val)
+	{
+		Global.music = val;
+	}
+
+	public void SetSound(float val)
+	{
+		Global.sound = val;
+	}
 }
+
