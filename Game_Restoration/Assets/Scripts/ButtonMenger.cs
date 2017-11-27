@@ -4,30 +4,48 @@ using UnityEngine;
 
 public class ButtonMenger : MonoBehaviour {
 
-	public GameObject setting;
+	public GameObject settingPanel;
+	public GameObject playPanel;
+	public GameObject exitPanel;
 
 	public void Play()
 	{
-
+		playPanel.SetActive(!playPanel.activeSelf);
+		//settingPanel.SetActive(false);
+		//exitPanel.SetActive(false);
 	}
 
 	public void Settings()
 	{
-		setting.SetActive(!setting.activeSelf);
+		settingPanel.SetActive(!settingPanel.activeSelf);
+		//playPanel.SetActive(false);
+		//exitPanel.SetActive(false);
 	}
 
 	public void Exit()
 	{
-
+		exitPanel.SetActive(!exitPanel.activeSelf);
+		//playPanel.SetActive(false);
+		//settingPanel.SetActive(false);
 	}	
 
-	public void LoadGame()
+	public void Continue()
 	{
 
 	}
 
 	public void NewGame()
 	{
-
+		Application.LoadLevel(1);
 	}
+
+	public void ExitYes()
+	{
+		Application.Quit();
+	}
+
+	public void ExitNo()
+	{
+		exitPanel.SetActive(false);
+	}	
 }
