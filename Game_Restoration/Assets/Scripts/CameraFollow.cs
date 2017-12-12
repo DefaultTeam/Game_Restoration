@@ -4,51 +4,51 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour {
 
-    public float damping = 1.5f;
-    public Vector2 offset = new Vector2(2f, 1f);
-    public bool faceLeft;
-    private Transform player;
-    private int lastX;
-    // Use this for initialization
-    void Start () {
-        offset = new Vector2(Mathf.Abs(offset.x), offset.y);
-        FindPlayer(faceLeft);
+    [SerializeField]
+    private float speed = 3;
 
-    }
-    public void FindPlayer(bool playerFaceLeft)
+
+
+    [SerializeField]
+    private float MinY = 0;
+    [SerializeField]
+    private float MinX = 1000;
+    [SerializeField]
+    private float MaxX = 3;
+    [SerializeField]
+    private float MaxY = 0;
+
+    public Transform target;
+
+    Vector3 volocity = Vector3.zero;
+
+    public float smoothtime = 0.15f;
+
+    //private void Awake()
+    //{
+    //    if (!target)
+    //        target = FindObjectOfType<Player>().tranform;
+    //}
+
+    private void FixedUpdate()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        lastX = Mathf.RoundToInt(player.position.x);
-        if (playerFaceLeft)
-        {
-            transform.position = new Vector3(player.position.x - offset.x, player.position.y + offset.y, transform.position.z);
-        }
-        else
-        {
-            transform.position = new Vector3(player.position.x + offset.x, player.position.y + offset.y, transform.position.z);
-        }
+        Vector3 position = target.position;
+        position.z = -10;
+        if (position.x > MinX && position.x < MaxX)// && position.y > MinY && position.y < MaxY)
+            position.x = Mathf.Clamp(position.x, MinX, MaxX);
+        else if(position.x <= MinX)
+            position.x = Mathf.Clamp(position.x, MinX, position.x);
+        else if (position.x >= MaxX)
+            position.x = Mathf.Clamp(position.x, position.x,MaxX);
+
+        if (position.y > MinY && position.y < MaxY)// && position.y > MinY && position.y < MaxY)
+            position.y = Mathf.Clamp(position.y, MinY, MaxY);
+        else if (position.y <= MinY)
+            position.y = Mathf.Clamp(position.y, MinY, position.y);
+        else if (position.y >= MaxY)
+            position.y = Mathf.Clamp(position.y, position.y, MaxY);
+        transform.position = Vector3.SmoothDamp(transform.position, position, ref volocity, smoothtime);
+
     }
 
-    // Update is called once per frame
-    void Update () {
-
-        if (player)
-        {
-            int currentX = Mathf.RoundToInt(player.position.x);
-            if (currentX > lastX) faceLeft = false; else if (currentX < lastX) faceLeft = true;
-            lastX = Mathf.RoundToInt(player.position.x);
-
-            Vector3 target;
-            if (faceLeft)
-            {
-                target = new Vector3(player.position.x - offset.x, player.position.y + offset.y, transform.position.z);
-            }
-            else
-            {
-                target = new Vector3(player.position.x + offset.x, player.position.y + offset.y, transform.position.z);
-            }
-            Vector3 currentPosition = Vector3.Lerp(transform.position, target, damping * Time.deltaTime);
-            transform.position = currentPosition;
-        }
-    }
 }
