@@ -22,19 +22,16 @@ public class PlayerControl : MonoBehaviour
 
         if (Player != null)
         {
-
             if (Input.GetKey(KeyCode.D))
-            {
                 Player.MoveRight();
-            }
             if (Input.GetKey(KeyCode.A))
-            {
                 Player.MoveLeft();
-            }
             if (Input.GetKeyDown(KeyCode.Space))
-            {
                 Player.Jump();
-            }
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+                Player.isStels = true;
+            if (Input.GetKeyUp(KeyCode.LeftControl))
+                Player.isStels = false;
         }
     }
 }

@@ -81,6 +81,8 @@
     <Compile Include="Assets\Scripts\ButtonMenger.cs" />
     <Compile Include="Assets\Scripts\CameraFollow.cs" />
     <Compile Include="Assets\Scripts\Global.cs" />
+    <Compile Include="Assets\Scripts\Inventar.cs" />
+    <Compile Include="Assets\Scripts\InventarLibrary.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\PlayerControl.cs" />
   </ItemGroup>

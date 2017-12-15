@@ -13,9 +13,28 @@ public class Player : MonoBehaviour
     private MoveState _moveState = MoveState.Idle;
     private DirectionState _directionState = DirectionState.Right;
     private Transform _transform;
+    private BoxCollider2D _collider;
     private Rigidbody2D _rigidbody;
     private Animator _animatorController;
     private float _walkTime = 0, _walkCooldown = 0.2f;
+    public bool isStels = false;
+
+    private void AnimMove()
+    {
+        if (!isStels)
+        {
+            _animatorController.Play("Walk");
+            _collider.offset = new Vector3(0, 0);
+            _collider.size = new Vector3(2, 7);
+
+        }
+        else
+        {
+            _animatorController.Play("Stels");
+            _collider.offset = new Vector3(0, -1.5f);
+            _collider.size = new Vector3(2, 3.8f);
+        }
+    }
 
     public void MoveRight()
     {
@@ -29,7 +48,7 @@ public class Player : MonoBehaviour
                 _directionState = DirectionState.Right;
             }
             _walkTime = _walkCooldown;
-            _animatorController.Play("Walk");
+            AnimMove();
         }
     }
 
@@ -45,7 +64,7 @@ public class Player : MonoBehaviour
                 _directionState = DirectionState.Left;
             }
             _walkTime = _walkCooldown;
-            _animatorController.Play("Walk");
+            AnimMove();
         }
     }
 
@@ -59,6 +78,7 @@ public class Player : MonoBehaviour
         }
     }
 
+
     private void Idle()
     {
         _moveState = MoveState.Idle;
@@ -69,29 +89,50 @@ public class Player : MonoBehaviour
     {
         _transform = GetComponent<Transform>();
         _rigidbody = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<BoxCollider2D>();
         _animatorController = GetComponent<Animator>();
         _directionState = transform.localScale.x > 0 ? DirectionState.Right : DirectionState.Left;
     }
 
     private void Update()
     {
-        if (_moveState == MoveState.Jump)
+        switch (_moveState)
         {
-            if (_rigidbody.velocity == Vector2.zero)
-            {
-                Idle();
-            }
-        }
-        else if (_moveState == MoveState.Walk)
-        {
-            Vector3 direction = (_directionState == DirectionState.Right ? 1 : -1) * _transform.right;
-            _transform.position = (Vector3.MoveTowards(_transform.position, _transform.position + direction,WalkSpeed *Time.deltaTime) );
-            //_rigidbody.velocity = ((_directionState == DirectionState.Right ? Vector2.right : -Vector2.right) * WalkSpeed * Time.deltaTime);
-            _walkTime -= Time.deltaTime;
-            if (_walkTime <= 0)
-            {
-                Idle();
-            }
+            case MoveState.Jump:
+                {
+                    if (_rigidbody.velocity == Vector2.zero)
+                    {
+                        Idle();
+                    }
+                }
+                break;
+            case MoveState.Walk:
+                {
+                    Vector3 direction = (_directionState == DirectionState.Right ? 1 : -1) * _transform.right;
+                    _transform.position = (Vector3.MoveTowards(_transform.position, _transform.position + direction, WalkSpeed * Time.deltaTime));
+                    //_rigidbody.velocity = ((_directionState == DirectionState.Right ? Vector2.right : -Vector2.right) * WalkSpeed * Time.deltaTime);
+                    _walkTime -= Time.deltaTime;
+                    if (_walkTime <= 0)
+                    {
+                        Idle();
+                    }
+                }
+                break;
+            case MoveState.Stels:
+                {
+                    Vector3 direction = (_directionState == DirectionState.Right ? 1 : -1) * _transform.right;
+                    _transform.position = (Vector3.MoveTowards(_transform.position, _transform.position + direction, WalkSpeed * Time.deltaTime));
+                    //_rigidbody.velocity = ((_directionState == DirectionState.Right ? Vector2.right : -Vector2.right) * WalkSpeed * Time.deltaTime);
+                
+                    _walkTime -= Time.deltaTime;
+                    if (_walkTime <= 0)
+                    {
+                        isStels = false;
+                        Idle();
+                    }
+                }
+                break;
+
         }
     }
 
@@ -105,6 +146,7 @@ public class Player : MonoBehaviour
     {
         Idle,
         Walk,
-        Jump
+        Jump,
+        Stels
     }
 }
