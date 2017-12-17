@@ -17,8 +17,12 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Animator _animatorController;
     private float _walkTime = 0, _walkCooldown = 0.2f;
+    private float _jumpTime = 0, _jumpCooldown = 1.4f;
     public bool isStels = false;
+    public bool underTruba = false;
 
+    private float startX, startY;
+ 
     private void AnimMove()
     {
         if (!isStels)
@@ -72,9 +76,11 @@ public class Player : MonoBehaviour
     {
         if (_moveState != MoveState.Jump)
         {
-            _rigidbody.velocity = (Vector3.up * JumpForce * Time.deltaTime);
+            //_rigidbody.velocity = (Vector3.up * JumpForce * Time.deltaTime);
+            _rigidbody.AddForce(new Vector2(0, JumpForce));
             _moveState = MoveState.Jump;
             _animatorController.Play("Jump");
+            _jumpTime = _jumpCooldown;
         }
     }
 
@@ -85,6 +91,11 @@ public class Player : MonoBehaviour
         _animatorController.Play("Idle");
     }
 
+    private void Dead()
+    {
+        transform.position = new Vector3(startX, startY, transform.position.z);
+    }
+
     private void Start()
     {
         _transform = GetComponent<Transform>();
@@ -92,6 +103,9 @@ public class Player : MonoBehaviour
         _collider = GetComponent<BoxCollider2D>();
         _animatorController = GetComponent<Animator>();
         _directionState = transform.localScale.x > 0 ? DirectionState.Right : DirectionState.Left;
+        startX = transform.position.x;
+        startY = transform.position.y;
+
     }
 
     private void Update()
@@ -100,10 +114,15 @@ public class Player : MonoBehaviour
         {
             case MoveState.Jump:
                 {
-                    if (_rigidbody.velocity == Vector2.zero)
+                    _jumpTime -= Time.deltaTime;
+                    if (_jumpTime <= 0)
                     {
                         Idle();
                     }
+                    //if (_rigidbody.velocity == Vector2.zero)
+                    //{
+                    //   Idle();
+                    //}
                 }
                 break;
             case MoveState.Walk:
@@ -133,6 +152,14 @@ public class Player : MonoBehaviour
                 }
                 break;
 
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.GetComponent<EdgeCollider2D>().tag == "puddle")
+        {
+            Dead();
         }
     }
 
