@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     private float _walkTime = 0, _walkCooldown = 0.2f;
     private float _jumpTime = 0, _jumpCooldown = 1.2f;
     public bool isStels = false;
+    public bool isRain = false;
     public bool underTruba = false;
     public bool ebleiteract = false;
     public GameObject collisionitem;
@@ -28,14 +29,19 @@ public class Player : MonoBehaviour
  
     private void AnimMove()
     {
-        if (!isStels)
+        if (isRain)
         {
-            _animatorController.Play("Walk");
-            _collider.offset = new Vector3(0, 0);
-            _collider.size = new Vector3(2, 7);
-
+            _animatorController.Play("Rain");
+            _collider.offset = new Vector3(0, -1.5f);
+            _collider.size = new Vector3(2, 3.8f);
         }
-        else if (underTruba)
+        //else if(underTruba)
+        //{
+        //    _animatorController.Play("Stels");
+        //    _collider.offset = new Vector3(0, -1.5f);
+        //    _collider.size = new Vector3(2, 3.8f);
+        //}
+        else if (isStels)
         {
             _animatorController.Play("Stels");
             _collider.offset = new Vector3(0, -1.5f);
@@ -43,9 +49,10 @@ public class Player : MonoBehaviour
         }
         else
         {
-            _animatorController.Play("Stels");
-            _collider.offset = new Vector3(0, -1.5f);
-            _collider.size = new Vector3(2, 3.8f);
+            _animatorController.Play("Walk");
+            _collider.offset = new Vector3(0, 0);
+            _collider.size = new Vector3(2, 7);
+
         }
     }
 

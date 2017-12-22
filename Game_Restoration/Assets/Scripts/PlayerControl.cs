@@ -42,11 +42,18 @@ public class PlayerControl : MonoBehaviour
             }
             if (!Input.GetKey(KeyCode.Escape) && flag)
                 flag = false;
-               
+
+            //TODO 
+            if (Input.GetKeyDown(KeyCode.LeftShift) && visible)
+                Player.isRain = true;
+            if (Input.GetKeyUp(KeyCode.LeftShift) && visible)
+                Player.isRain = false;
+
             if (Input.GetKeyDown(KeyCode.LeftControl) && visible)
                 Player.isStels = true;
             if (Input.GetKeyUp(KeyCode.LeftControl) && visible)
                 Player.isStels = false;
+
             if (Input.GetKeyUp(KeyCode.E) && visible)
                 Player.Interact();
         }

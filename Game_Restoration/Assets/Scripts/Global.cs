@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Global {
 
-	public static float music;
-	public static float sound;
+	public static float music = 1;
+	public static float sound = 1;
     public static int curentlevel = 1;
 }
