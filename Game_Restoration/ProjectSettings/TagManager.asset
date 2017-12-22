@@ -8,6 +8,7 @@ TagManager:
   - puddle
   - EndLv
   - truba
+  - item
   layers:
   - Default
   - TransparentFX

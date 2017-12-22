@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
 
 
     [Header("Speeds")]
-    public float WalkSpeed = 3;
-    public float JumpForce = 10;
+    public float WalkSpeed = 4;
+    public float JumpForce = 6;
 
     private MoveState _moveState = MoveState.Idle;
     private DirectionState _directionState = DirectionState.Right;
@@ -17,10 +18,12 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Animator _animatorController;
     private float _walkTime = 0, _walkCooldown = 0.2f;
-    private float _jumpTime = 0, _jumpCooldown = 1.4f;
+    private float _jumpTime = 0, _jumpCooldown = 1.2f;
     public bool isStels = false;
     public bool underTruba = false;
-
+    public bool ebleiteract = false;
+    public GameObject collisionitem;
+    public GameObject myself;
     private float startX, startY;
  
     private void AnimMove()
@@ -32,11 +35,26 @@ public class Player : MonoBehaviour
             _collider.size = new Vector3(2, 7);
 
         }
+        else if (underTruba)
+        {
+            _animatorController.Play("Stels");
+            _collider.offset = new Vector3(0, -1.5f);
+            _collider.size = new Vector3(2, 3.8f);
+        }
         else
         {
             _animatorController.Play("Stels");
             _collider.offset = new Vector3(0, -1.5f);
             _collider.size = new Vector3(2, 3.8f);
+        }
+    }
+
+    public void Interact()
+    {
+        if(ebleiteract)
+        {
+            Destroy(collisionitem);
+            ebleiteract = false;
         }
     }
 
@@ -70,15 +88,26 @@ public class Player : MonoBehaviour
             _walkTime = _walkCooldown;
             AnimMove();
         }
+        
     }
 
     public void Jump()
     {
         if (_moveState != MoveState.Jump)
         {
-            //_rigidbody.velocity = (Vector3.up * JumpForce * Time.deltaTime);
-            _rigidbody.AddForce(new Vector2(0, JumpForce));
+
+            _rigidbody.velocity = (Vector3.up * JumpForce/* * Time.deltaTime*/);
             _moveState = MoveState.Jump;
+            
+            if (_directionState == DirectionState.Left)
+            {
+                Debug.Log("hello");
+                _transform.localScale = new Vector3(_transform.localScale.x, _transform.localScale.y, _transform.localScale.z);            }
+            else if (_directionState == DirectionState.Right)
+            {
+                Debug.Log("hello");
+                _transform.localScale = new Vector3(_transform.localScale.x, _transform.localScale.y, _transform.localScale.z);
+            }
             _animatorController.Play("Jump");
             _jumpTime = _jumpCooldown;
         }
@@ -105,7 +134,8 @@ public class Player : MonoBehaviour
         _directionState = transform.localScale.x > 0 ? DirectionState.Right : DirectionState.Left;
         startX = transform.position.x;
         startY = transform.position.y;
-
+        Debug.Log(Global.music);
+        Debug.Log(Global.sound);
     }
 
     private void Update()
@@ -115,21 +145,19 @@ public class Player : MonoBehaviour
             case MoveState.Jump:
                 {
                     _jumpTime -= Time.deltaTime;
+                    Vector3 direction = (_directionState == DirectionState.Right ? 1 : -1) * _transform.right;
+                    _transform.position = (Vector3.MoveTowards(_transform.position, _transform.position + direction, JumpForce  * Time.deltaTime));//1.6f *  WalkSpeed
                     if (_jumpTime <= 0)
                     {
                         Idle();
                     }
-                    //if (_rigidbody.velocity == Vector2.zero)
-                    //{
-                    //   Idle();
-                    //}
+                    
                 }
                 break;
             case MoveState.Walk:
                 {
                     Vector3 direction = (_directionState == DirectionState.Right ? 1 : -1) * _transform.right;
                     _transform.position = (Vector3.MoveTowards(_transform.position, _transform.position + direction, WalkSpeed * Time.deltaTime));
-                    //_rigidbody.velocity = ((_directionState == DirectionState.Right ? Vector2.right : -Vector2.right) * WalkSpeed * Time.deltaTime);
                     _walkTime -= Time.deltaTime;
                     if (_walkTime <= 0)
                     {
@@ -141,8 +169,6 @@ public class Player : MonoBehaviour
                 {
                     Vector3 direction = (_directionState == DirectionState.Right ? 1 : -1) * _transform.right;
                     _transform.position = (Vector3.MoveTowards(_transform.position, _transform.position + direction, WalkSpeed * Time.deltaTime));
-                    //_rigidbody.velocity = ((_directionState == DirectionState.Right ? Vector2.right : -Vector2.right) * WalkSpeed * Time.deltaTime);
-                
                     _walkTime -= Time.deltaTime;
                     if (_walkTime <= 0)
                     {
@@ -157,9 +183,40 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.GetComponent<EdgeCollider2D>().tag == "puddle")
+
+        if (collision.gameObject.tag == "item")
+        {
+            Debug.Log("hello");
+            collisionitem = collision.gameObject;
+            ebleiteract = true;
+        }else if (collision.gameObject.tag == "puddle")
         {
             Dead();
+        }else if(collision.gameObject.tag == "truba")
+        {
+            underTruba = true;
+        }
+
+        if (collision.gameObject.tag == "EndLv")
+        {
+            GameObject.DontDestroyOnLoad(myself);
+            Global.curentlevel++;
+            PlayerPrefs.SetInt("level", Global.curentlevel);
+            SceneManager.LoadScene(Global.curentlevel);
+            
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "item")
+        {
+            Debug.Log("hello");
+            ebleiteract = false;
+        }
+        else if (collision.gameObject.tag == "truba")
+        {
+            underTruba = false;
         }
     }
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ButtonMenger : MonoBehaviour {
 
@@ -8,8 +9,21 @@ public class ButtonMenger : MonoBehaviour {
 	public GameObject play;
 	public GameObject exit;
 
-	public void Play()
+    private bool continueEneble = true;
+
+    public void Start()
+    {
+
+        if (Global.curentlevel <= 1)
+        {
+            continueEneble = false;
+        }
+        else
+            continueEneble = true;
+    }
+    public void Play()
 	{
+
 		play.SetActive(!play.activeSelf);
 		setting.SetActive(false);
 		exit.SetActive(false);
@@ -31,17 +45,24 @@ public class ButtonMenger : MonoBehaviour {
 
 	public void Continue()
 	{
-	
+        if(continueEneble)
+        {
+            SceneManager.LoadScene(Global.curentlevel);
+        }
+
 	}
 
 	public void NewGame()
 	{
-		Application.LoadLevel(1);
-	}
+        Global.curentlevel = 1;
+        PlayerPrefs.SetInt("level", Global.curentlevel);
+        SceneManager.LoadScene(1);
+    }
 
 	public void ExitYes()
 	{
-		Application.Quit();
+        PlayerPrefs.SetInt("level", Global.curentlevel);
+        Application.Quit();
 	}
 
 	public void ExitNo()
